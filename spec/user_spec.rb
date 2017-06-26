@@ -3,25 +3,18 @@ require './models/user.rb'
 
 RSpec.describe User do
   describe 'greet' do
-    before do
-      @params = { name: 'たろう' }
-    end
+    let(:user) { User.new(params) }
+    let(:params) { { name: 'たろう', age: age } }
     context '12歳以下の場合' do
-      before do
-        @params.merge!(age: 12)
-      end
+      let(:age) { 12 }
       it 'ひらがなで答えること' do
-        user = User.new(@params)
         expect(user.greet).to eq 'ぼくはたろうだよ。'
       end
     end
 
     context '13以上の場合' do
-      before do
-        @params.merge!(age: 13)
-      end
+      let(:age) { 13 }
       it "漢字で答えること" do
-        user = User.new(@params)
         expect(user.greet).to eq '僕はたろうです。'
       end
     end
