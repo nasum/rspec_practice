@@ -1,4 +1,6 @@
 require 'spec_helper'
+require './models/shopping_cart.rb'
+require './models/lottery.rb'
 
 RSpec.describe 'matcher' do
   describe '#to' do
@@ -48,6 +50,33 @@ RSpec.describe 'matcher' do
       expect(nil).to be_falsey
       expect(nil).not_to be false
       expect(nil).not_to eq false
+    end
+  end
+  describe '#change' do
+    let(:x){ [1, 2, 3] }
+    it { expect{ x.pop }.to change{ x.size }.from(3).to(2) }
+    it { expect{ x.pop }.to change{ x.size }.by(-1) }
+    it { expect{ x.push(10) }.to change{ x.size }.by(1) }
+  end
+  describe '#include' do
+    let(:x){ [1, 2, 3] }
+    it { expect(x).to include 1 }
+    it { expect(x).to include 1, 3 }
+  end
+  describe '#raise_error' do
+    it { expect{ 1/0 }.to raise_error ZeroDivisionError }
+    it 'nilを追加するとエラーが発生すること' do
+      cart = ShoppingCart.new
+      expect{ cart.add nil }.to raise_error 'Item is nil.'
+    end
+  end
+  describe '#be_within' do
+    it '当選確率が役25%になっている' do
+      results = Lottery.genereate_results(10000)
+      win_count = results.count(&:win?)
+      probability = win_count.to_f / 10000 * 100
+
+      expect(probability).to be_within(1.0).of(25.0)
     end
   end
 end
